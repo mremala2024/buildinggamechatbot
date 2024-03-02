@@ -1,14 +1,18 @@
+import os
 import streamlit as st
 from openai import OpenAI
 
-# Set your OpenAI API key
-openai.api_key = "key"
+# Read API key and assistant ID from environment variables
+api_key = os.getenv("OPENAI_API_KEY")
+assistant_id = os.getenv("ASSISTANT_ID")
 
-# Define your assistant ID
-assistant_id = "asst_aQ0i9M3s5EzKZgTVEGUxIFik"
+# Ensure that both API key and assistant ID are provided
+if not api_key or not assistant_id:
+    st.error("Please provide both OPENAI_API_KEY and ASSISTANT_ID environment variables.")
+    st.stop()
 
 # Create an instance of the OpenAI client
-client = OpenAI(api_key="key")
+client = OpenAI(api_key=api_key)
 
 # Define your Streamlit app
 def main():
