@@ -24,7 +24,7 @@ def main():
     # Button to trigger the OpenAI API call
     if st.button("Generate Response"):
         # Call the OpenAI API with the user input prompt and assistant ID
-        response = client.beta.assistants.create_message(
+        response = client.beta.assistants.create(
             assistant_id=assistant_id,
             content=user_input
         )
