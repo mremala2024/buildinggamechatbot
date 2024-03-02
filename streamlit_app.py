@@ -2,8 +2,10 @@ import os
 import streamlit as st
 from openai import OpenAI
 
-# Read API key and assistant ID from environment variables
+# Read API key from environment variables
 api_key = os.getenv("OPENAI_API_KEY")
+
+# Read assistant ID from environment variables
 assistant_id = os.getenv("ASSISTANT_ID")
 
 # Ensure that both API key and assistant ID are provided
@@ -24,14 +26,14 @@ def main():
     # Button to trigger the OpenAI API call
     if st.button("Generate Response"):
         # Call the OpenAI API with the user input prompt and assistant ID
-        response = client.beta.assistants.create(
+        response = client.beta.assistants.messages.create(
             assistant_id=assistant_id,
-            content=user_input
+            messages=[{"role": "user", "content": user_input}]
         )
 
         # Display the generated response
         st.write("Response:")
-        st.write(response.data.content.text)
+        st.write(response.data[0].content.text)
 
 # Run the app
 if __name__ == "__main__":
