@@ -2,13 +2,13 @@ import streamlit as st
 from openai import OpenAI
 
 # Set your OpenAI API key
-openai.api_key = "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"
+openai.api_key = "key"
 
 # Define your assistant ID
 assistant_id = "asst_aQ0i9M3s5EzKZgTVEGUxIFik"
 
 # Create an instance of the OpenAI client
-client = OpenAI(api_key="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")
+client = OpenAI(api_key="key")
 
 # Define your Streamlit app
 def main():
