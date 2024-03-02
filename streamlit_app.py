@@ -2,28 +2,28 @@ import streamlit as st
 import os
 from openai import OpenAI
 
-# Set the OpenAI API key using Streamlit secrets functionality
-openai_api_key = st.secrets["OPENAI_API_KEY"]
+# Load API key from environment variable
+openai_api_key = os.environ.get("OPENAI_API_KEY")
 
 # Initialize OpenAI client
 client = OpenAI(api_key=openai_api_key)
 
-# Get user input message
-prompt = st.text_input("What is up?")
+# Display input field for the user
+user_input = st.text_input("Enter your message", "Say this is a test")
 
-if prompt:
+# Create chat completion when the user submits a message
+if st.button("Generate Completion"):
     # Create chat completion
     chat_completion = client.chat.completions.create(
-        model="gpt-3.5-turbo",
         messages=[
             {
                 "role": "user",
-                "content": prompt,
+                "content": user_input,
             }
         ],
+        model="gpt-3.5-turbo",
     )
-
-    # Extract and display assistant's response
-    if chat_completion.choices:
-        assistant_response = chat_completion.choices[0].message.content
-        st.text("Assistant: " + assistant_response)
+    
+    # Extract and display the completion
+    completion_text = chat_completion.choices[0].message.content
+    st.write("Chatbot:", completion_text)
