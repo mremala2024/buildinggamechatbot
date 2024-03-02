@@ -25,16 +25,37 @@ def main():
 
     # Button to trigger the OpenAI API call
     if st.button("Generate Response"):
-        # Call the OpenAI API with the user input prompt and assistant ID
-        response = client.beta.assistants.messages.create(
-            assistant_id=assistant_id,
-            messages=[{"role": "user", "content": user_input}]
+        # Create a new message on the thread
+        message = client.beta.threads.messages.create(
+            thread_id=thread.id,
+            role="user",
+            content=user_input
+        )
+
+        # Execute the run with the assistant
+        run = client.beta.threads.runs.create(
+            thread_id=thread.id,
+            assistant_id=assistant.id
+        )
+
+        # Grab the messages again
+        messages = client.beta.threads.messages.list(
+            thread_id=thread.id,
+            order="asc",
+            after=message.id
         )
 
         # Display the generated response
+        response_text = messages.data[0].content.text
         st.write("Response:")
-        st.write(response.data[0].content.text)
+        st.write(response_text)
 
 # Run the app
 if __name__ == "__main__":
+    # Create a new thread
+    thread = client.beta.threads.create()
+
+    # Get the assistant object
+    assistant = client.beta.assistants.retrieve(assistant_id=assistant_id)
+
     main()
