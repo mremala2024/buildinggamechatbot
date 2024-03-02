@@ -15,25 +15,35 @@ with st.sidebar:
         else:
             st.success('Proceed to entering your prompt message!', icon='👉')
 
+# Initialize an empty list to store chat messages
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
+# Loop through each message in the chat history
 for message in st.session_state.messages:
+    # Display each message in the chat interface
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
+# Get user input message
 if prompt := st.chat_input("What is up?"):
+    # Add user message to chat history
     st.session_state.messages.append({"role": "user", "content": prompt})
+    
+    # Display user message in the chat interface
     with st.chat_message("user"):
         st.markdown(prompt)
+    
+    # Generate completion using OpenAI's Completion API
+    response = openai.Completion.create(
+        engine="davinci",  # or any other engine you prefer
+        prompt="\n".join([m["content"] for m in st.session_state.messages]),
+        temperature=0.7,
+        max_tokens=150
+    )
+    
+    # Extract and display assistant's response from completion
+    assistant_response = response.choices[0].text.strip()
+    st.session_state.messages.append({"role": "assistant", "content": assistant_response})
     with st.chat_message("assistant"):
-        message_placeholder = st.empty()
-        full_response = ""
-        for response in openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=[{"role": m["role"], "content": m["content"]}
-                      for m in st.session_state.messages], stream=True):
-            full_response += response.choices[0].delta.get("content", "")
-            message_placeholder.markdown(full_response + "▌")
-        message_placeholder.markdown(full_response)
-    st.session_state.messages.append({"role": "assistant", "content": full_response})
+        st.markdown(assistant_response)
